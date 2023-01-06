@@ -1,0 +1,33 @@
+<!-- ejs-mate layout  -->
+<% layout('layout/boilerplate') -%>
+  <h1 class="display-5 text-primary text-uppercase text-center">all campgrounds</h1>
+  <div class="container my-3 text-center">
+    <div class="row justify-content-center">
+      <div class="col-3">
+        <a href="/campgrounds/new" class="btn btn-primary">Add New Campground</a>
+      </div>
+    </div>
+  </div>
+
+<!-- Displaying all campgrounds  -->
+  <% for (let campground of campgrounds) { %>
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="<%= campground.image %> " class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">
+              <%= campground.title %>
+            </h5>
+            <p class="card-text">
+              <%= campground.description %>
+            </p>
+            <p class="card-text"><small class="text-muted">$ <%= campground.price %> /night</small></p>
+            <a href="campgrounds/<%= campground._id %>" class="btn btn-primary">View Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>

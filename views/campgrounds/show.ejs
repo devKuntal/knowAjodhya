@@ -1,0 +1,18 @@
+<!-- ejs-mate llayout  -->
+    <% layout('layout/boilerplate') -%>
+
+    <div class="card mb-3">
+        <img src="<%= camp.image %>" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h1 class="card-title"><%= camp.title %></h1>
+          <h5  class="card-text"><%= camp.location %></h5>
+          <p class="card-text"><%= camp.description %></p>
+          <p class="card-text">$ <%= camp.price %> /night</p>
+          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          <a href="/campgrounds" class="btn btn-primary">All Campgrounds</a>
+          <a href="/campgrounds/<%= camp._id %>/edit" class="btn btn-warning">Edit</a>
+          <form action="/campgrounds/<%= camp._id %>?_method=DELETE" method="POST" class="d-inline">
+            <button class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
