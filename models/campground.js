@@ -19,10 +19,11 @@ const campgroundSchema = new Schema({
 
 // When delete a campground delete all the reviews related to it (mongoose middleware)
 // if there is something in the document remove all the reviews 
-// which matches to the id in the reviews in the campground schema 
+// which matches to the id in the reviews in the campground schema
+// Review.remove is deprected so hete deleteMany is used 
 campgroundSchema.post('findOneAndDelete', async function(doc) {
     if (doc) {
-        await Review.remove({
+        await Review.deleteMany({      
             _id: {
                 $in: doc.reviews
             }

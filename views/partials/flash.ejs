@@ -1,0 +1,17 @@
+<!-- If there is success msg and it is not empty then display success  -->
+<% if(success && success.length) { %> 
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= success %>
+    <!-- cancel Button  -->
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
+</div>
+<% } %> 
+
+<!-- Error Flash  -->
+<% if(error && error.length) { %> 
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error %>
+        <!-- cancel Button  -->
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
+    </div>
+    <% } %> 
