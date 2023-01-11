@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate')
 const session = require('express-session')
 const flash = require('connect-flash')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const User = require('./models/user')
 
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -13,7 +16,8 @@ const ExpressError = require('./utils/ExpressError')
 
 // Importing Routes
 const campgrounds = require('./routes/campgrounds')  // Importing campgrounds
-const reviews = require('./routes/reviews')  // Importing Reviews
+const reviews = require('./routes/reviews');  // Importing Reviews
+const { getMaxListeners } = require('process');
 
 // supress deprecation warning for mongoose 7
 mongoose.set('strictQuery', false);
@@ -58,11 +62,28 @@ app.use(session(sessionConfig))
 //Setting up flash
 app.use(flash())
 
+// Passrort middleware or initilize passport
+app.use(passport.initialize())
+app.use(passport.session()) // for persistent login session we need this middleware and make sure session is used before passport sessions
+// set a new local strategy
+passport.use(new LocalStrategy(User.authenticate())) // hello passport we need to use a local strategy to authienticate user model 
+// these model are automatically defined with passport-local-mongoose
+//Store user in the session and get out user from this sessions 
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
 // Flash middleware
 app.use((req, res, next)  => {
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
+})
+
+//fake user 
+app.get('/fakeuser', async(req, res) => {
+    const user = new User({ email: 'newuser@gmail.com', username: 'newuser' })
+    const newUser = await User.register(user, 'newuser')
+    res.send(newUser)
 })
 
 // Campgrounds routes
