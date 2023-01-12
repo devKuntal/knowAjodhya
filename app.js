@@ -15,9 +15,10 @@ const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError')
 
 // Importing Routes
-const campgrounds = require('./routes/campgrounds')  // Importing campgrounds
-const reviews = require('./routes/reviews');  // Importing Reviews
+const campgroundRoutes = require('./routes/campgrounds')  // Importing campgrounds
+const reviewRoutes = require('./routes/reviews');  // Importing Reviews
 const { getMaxListeners } = require('process');
+const userRoutes = require('./routes/user')
 
 // supress deprecation warning for mongoose 7
 mongoose.set('strictQuery', false);
@@ -74,6 +75,14 @@ passport.deserializeUser(User.deserializeUser())
 
 // Flash middleware
 app.use((req, res, next)  => {
+    // printing out the session
+    // console.log(req.session)
+    // if you are not comming from login or home page then set the return to property to originalurl (prevvious url) 
+    if (!['/login', '/'].includes(req.originalUrl)) {
+        req.session.returnTo = req.originalUrl
+        // console.log(req.session.returnTo)
+    }
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
@@ -87,10 +96,13 @@ app.get('/fakeuser', async(req, res) => {
 })
 
 // Campgrounds routes
-app.use('/campgrounds', campgrounds)
+app.use('/campgrounds', campgroundRoutes)
 
 // review routes
-app.use('/campgrounds/:id/reviews', reviews)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
+
+//User routes
+app.use('/', userRoutes)
 
 //getting the responce
 app.get('/', (req, res) => {
