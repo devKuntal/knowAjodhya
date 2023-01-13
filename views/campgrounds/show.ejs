@@ -6,16 +6,21 @@
         <div class="card-body">
           <h1 class="card-title"><%= camp.title %></h1>
           <h5  class="card-text"><%= camp.location %></h5>
+          <p class="card-text"><small class="text-muted fw-bold">Created by <%= camp.author.username %> </small></p>
           <p class="card-text"><%= camp.description %></p>
           <p class="card-text">$ <%= camp.price %> /night</p>
           <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
           <a href="/campgrounds" class="btn btn-primary">All Campgrounds</a>
+          <!-- if current user is author of the campground then show edit and delete button if nobody sign in it will work-->
+          <% if (currentUser && camp.author.equals(currentUser._id)) { %> 
           <a href="/campgrounds/<%= camp._id %>/edit" class="btn btn-warning">Edit</a>
           <form action="/campgrounds/<%= camp._id %>?_method=DELETE" method="POST" class="d-inline">
             <button class="btn btn-danger">Delete</button>
           </form>
+          <% } %> 
         </div>
       </div>
+      <% if (currentUser) { %> 
       <div class="card mb-3">
         <h3 class="m-3">Write A Review</h3>
         <form action="/campgrounds/<%= camp._id %>/reviews" method="POST" novalidate class="needs-validation">
@@ -38,17 +43,21 @@
           </div>
         </form>
       </div>
+      <% } %> 
 
         <%  for (let review of camp.reviews) { %>
           <div class="card mb-3">
             <div class="m-3">
               <h5 class="card-text">Rating: <%= review.rating %></h5>
+              <p class="card-subtitle text-muted">by <%= review.author.username %></p>
               <p class="card-text"><%= review.body %> </p>
             </div>
+            <% if (currentUser && review.author.equals(currentUser._id)) { %>
             <div class="m-3">
               <form action="/campgrounds/<%= camp._id %>/reviews/<%= review._id %>?_method=DELETE" method="post">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             </div>
+            <% } %> 
           </div>
           <% } %>  

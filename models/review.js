@@ -1,11 +1,15 @@
 // Creating review model 
 const mongoose = require('mongoose')
-const schema = mongoose.Schema
+const Schema = mongoose.Schema
 
 // Creating the schema
-const reviewSchema = new schema({
+const reviewSchema = new Schema({
     body: String,
-    rating: Number
+    rating: Number,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 // Exporting Model

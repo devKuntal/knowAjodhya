@@ -71,14 +71,16 @@ passport.use(new LocalStrategy(User.authenticate())) // hello passport we need t
 // these model are automatically defined with passport-local-mongoose
 //Store user in the session and get out user from this sessions 
 passport.serializeUser(User.serializeUser())
+
 passport.deserializeUser(User.deserializeUser())
+
 
 // Flash middleware
 app.use((req, res, next)  => {
     // printing out the session
     // console.log(req.session)
     // if you are not comming from login or home page then set the return to property to originalurl (prevvious url) 
-    if (!['/login', '/'].includes(req.originalUrl)) {
+    if (!['/login', '/'].includes(req.originalUrl)) { 
         req.session.returnTo = req.originalUrl
         // console.log(req.session.returnTo)
     }

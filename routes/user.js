@@ -59,8 +59,13 @@ router.post('/logout', function(req, res, next){
     req.logout(function(err) {
       if (err) { return next(err); }
       req.flash('success', 'See you again soon')
+      req.session.destroy
       res.redirect('campgrounds');
     });
   });
 
 module.exports = router
+
+// req.session.destroy((err) => {
+//     res.clearCookie('connect.sid')
+// })
