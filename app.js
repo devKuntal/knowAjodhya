@@ -17,7 +17,6 @@ const ExpressError = require('./utils/ExpressError')
 // Importing Routes
 const campgroundRoutes = require('./routes/campgrounds')  // Importing campgrounds
 const reviewRoutes = require('./routes/reviews');  // Importing Reviews
-const { getMaxListeners } = require('process');
 const userRoutes = require('./routes/user')
 
 // supress deprecation warning for mongoose 7
@@ -90,12 +89,6 @@ app.use((req, res, next)  => {
     next()
 })
 
-//fake user 
-app.get('/fakeuser', async(req, res) => {
-    const user = new User({ email: 'newuser@gmail.com', username: 'newuser' })
-    const newUser = await User.register(user, 'newuser')
-    res.send(newUser)
-})
 
 // Campgrounds routes
 app.use('/campgrounds', campgroundRoutes)

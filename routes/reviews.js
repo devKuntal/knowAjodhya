@@ -3,9 +3,11 @@ const router = express.Router({ mergeParams: true}) // to pass the campground id
 const catchAsync = require('../utils/catchAsync')
 // const ExpressError = require('../utils/ExpressError')
 // const { reviewSchema } = require('../schemas')
-const campground = require('../models/campground');
-const Review = require('../models/review');
+// const campground = require('../models/campground');
+// const Review = require('../models/review');
 const { validateReview, isLoggedIn, isReviewAuthor } = require('../middleware')
+
+const reviewController = require('../controllers/reviews')
 
 // Validating reviews using joi
 // const validateReview = (req, res, next) => {
@@ -20,31 +22,11 @@ const { validateReview, isLoggedIn, isReviewAuthor } = require('../middleware')
 
 // creating reviews model routes
 // reviews routes
-router.post('/', isLoggedIn, validateReview, catchAsync(async(req, res) => {
-    // res.send('You made it!!')
-    const camp = await campground.findById(req.params.id)
-    const review = new Review(req.body.review)
-    // author
-    review.author = req.user._id
-    camp.reviews.push(review)
-    await review.save()
-    await camp.save()
-    req.flash('success', 'Thanks for your review!')
-    res.redirect(`/campgrounds/${camp._id}`)
-}))
+router.post('/', isLoggedIn, validateReview, catchAsync(reviewController.createReview))
 // Displaying Review
-router.get('/:reviewId', catchAsync(async(req, res) => {
-    const review = await Review.findById(req.params.id)
-    res.render('campgrounds/show', { review })
-}))
+router.get('/:reviewId', catchAsync(reviewController.renderReviewForm))
 // Delete Reviews
-router.delete('/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(async(req,res) => {
-    const { id, reviewId } = req.params;
-    await campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
-    await Review.findByIdAndDelete(reviewId);
-    req.flash('success', 'Successfully deleted your review!')
-    res.redirect(`/campgrounds/${id}`);
-}))
+router.delete('/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(reviewController.deleteReview))
 
 
 module.exports = router
