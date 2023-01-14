@@ -7,20 +7,22 @@ const catchAsync = require('../utils/catchAsync')
 const userController = require('../controllers/users')
 
 // Register Rpoutes
-router.get('/register', userController.renderRegForm)
 
-router.post('/register', catchAsync(userController.register))
+router.route('/register')
+    .get(userController.renderRegForm)
+    .post(catchAsync(userController.register))
 // Login Routes
-router.get('/login', userController.renderLoginForm)
+router.route('/login')
+    .get(userController.renderLoginForm)
 // passport authienticate middleware verify the user and login see documentation for more info
-router.post('/login', passport.authenticate('local', 
-    {
-         failureRedirect: '/login', 
-         failureMessage: true, 
-         failureFlash: true, 
-         keepSessionInfo: true
-    }), 
-    userController.login)
+    .post(passport.authenticate('local', 
+        {
+            failureRedirect: '/login', 
+            failureMessage: true, 
+            failureFlash: true, 
+            keepSessionInfo: true
+        }), 
+        userController.login)
 
 // logout routes
 // router.get('/logout', (req, res) => {
