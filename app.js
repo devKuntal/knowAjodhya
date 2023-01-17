@@ -73,22 +73,17 @@ passport.serializeUser(User.serializeUser())
 
 passport.deserializeUser(User.deserializeUser())
 
-
 // Flash middleware
 app.use((req, res, next)  => {
-    // printing out the session
-    // console.log(req.session)
     // if you are not comming from login or home page then set the return to property to originalurl (prevvious url) 
     if (!['/login', '/'].includes(req.originalUrl)) { 
         req.session.returnTo = req.originalUrl
-        // console.log(req.session.returnTo)
     }
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
     next()
 })
-
 
 // Campgrounds routes
 app.use('/campgrounds', campgroundRoutes)
@@ -104,10 +99,6 @@ app.get('/', (req, res) => {
     // res.send('Hello from yelpCamp!');
     res.render('home');
 })
-
-
-
-
 
 // Respond if something is not there
 // Respond with express error

@@ -25,12 +25,6 @@
       <div class="card mb-3">
         <h3 class="m-3">Write A Review</h3>
         <form action="/campgrounds/<%= camp._id %>/reviews" method="POST" novalidate class="needs-validation">
-          <!-- <div class="m-3">
-            <label for="rating" class="form-label">Rating</label>
-            <input type="range" class="form-range" min="1" max="5" name="review[rating]" id="rating" required>
-            <div class="invalid-feedback">
-              Please write a review.
-            </div> -->
             <div class="m-3">
               <fieldset class="starability-grow" required>
                 <legend>Your rating:</legend>
@@ -71,7 +65,6 @@
               <p class="starability-result" data-rating="<%= review.rating %>">
                 Rated: <%= review.rating %> stars
               </p>
-              <!-- <p class="card-subtitle text-muted">by <%= review.author.username %></p> -->
               <p class="card-text"><%= review.body %> </p>
             </div>
             <% if (currentUser && review.author.equals(currentUser._id)) { %>

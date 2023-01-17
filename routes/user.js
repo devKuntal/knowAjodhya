@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-// const User = require('../models/user')
+
 const catchAsync = require('../utils/catchAsync')
 
 const userController = require('../controllers/users')
@@ -25,15 +25,6 @@ router.route('/login')
         userController.login)
 
 // logout routes
-// router.get('/logout', (req, res) => {
-//     req.logout()
-//     req.flash('success', 'See you again soon')
-//     res.redirect('/')
-// })
 router.post('/logout', userController.logout);
 
 module.exports = router
-
-// req.session.destroy((err) => {
-//     res.clearCookie('connect.sid')
-// })

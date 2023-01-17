@@ -5,12 +5,10 @@ module.exports.renderRegForm = (req, res) => {
 }
 
 module.exports.register = async(req, res, next) => {
-    // res.send(req.body)
     try {
         const {username, email, password } = req.body
         const user = new User({email, username})
         const registeredUser = await User.register(user, password)
-        // console.log(registeredUser)
         // logged in after a user is registrated 
         req.login(registeredUser, err => {
             if (err) { return next(err)}
@@ -29,19 +27,9 @@ module.exports.renderLoginForm = (req, res) => {
 
 module.exports.login = (req, res) => {
     req.flash('success', 'Welcome Back!')
-    // get back the user where he is actually before login
-    // let returnTo = '/'
-    // if (req.session.returnTo) {
-    //     returnTo = req.session.returnTo
-    //     console.log('returnto..',returnTo)
-    //     delete req.session.returnTo
-    // }
-    // console.log('returnTo..', req.session.returnTo)
-    const redirectUrl = req.session.returnTo || '/campgrounds'
-    // // Deleting the return to from the sessions
-    delete req.session.returnTo
-    // redirect to the previous url
-    res.redirect(redirectUrl)
+    const redirectUrl = req.session.returnTo || '/campgrounds'   // fetch the previous url where the user is oherwise it will be campground
+    delete req.session.returnTo     // Deleting the return to from the sessions
+    res.redirect(redirectUrl)    // redirect to the previous url
 }
 
 module.exports.logout = function(req, res, next){
