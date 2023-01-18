@@ -27,7 +27,16 @@ const seedDB = async() => {
         const camp = new campground({
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            image: 'https://source.unsplash.com/collection/483251',
+            // image: 'https://source.unsplash.com/collection/483251',
+            images:[ 
+            {
+                url: 'https://res.cloudinary.com/dqsjjbp5w/image/upload/v1673980358/YelpCamp/f9nypqoskoraz62rczbn.jpg',
+                filename: 'YelpCamp/f9nypqoskoraz62rczbn',
+              },
+              {
+                url: 'https://res.cloudinary.com/dqsjjbp5w/image/upload/v1673980358/YelpCamp/uifnrm5exk9okwra1qx2.jpg',
+                filename: 'YelpCamp/uifnrm5exk9okwra1qx2',
+              }],
             author: '63be9bc24db208151741a7d7',
             price,
             description: `Ad anim mollit fugiat magna ad mollit. Incididunt cupidatat ex qui quis anim. Consectetur 
