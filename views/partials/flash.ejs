@@ -1,5 +1,6 @@
 <!-- If there is success msg and it is not empty then display success  -->
 <% if(success && success.length) { %> 
+<div class="container mt-3">
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <%= success %>
     <!-- cancel Button  -->
@@ -14,4 +15,5 @@
         <!-- cancel Button  -->
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
     </div>
+</div>
     <% } %> 

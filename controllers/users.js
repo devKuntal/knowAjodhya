@@ -37,6 +37,7 @@ module.exports.logout = function(req, res, next){
       if (err) { return next(err); }
       req.flash('success', 'See you again soon')
       req.session.destroy
-      res.redirect('campgrounds');
+    //   res.redirect('campgrounds');
+      res.redirect('/');
     });
   }

@@ -1,0 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
+.hero {
+    background-image: linear-gradient(to right, rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(https://res.cloudinary.com/dqsjjbp5w/image/upload/v1673977182/YelpCamp/fmlgx0hw5hedv6j8kam6.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.navbar-brand {
+    color: gray;
+}

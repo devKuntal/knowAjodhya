@@ -16,6 +16,7 @@ const multer  = require('multer')
 
 // const upload = multer({ dest: 'uploads/' })
 const User = require('./models/user')
+const campground = require('./models/campground')
 
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -103,9 +104,19 @@ app.use('/campgrounds/:id/reviews', reviewRoutes)
 app.use('/', userRoutes)
 
 //getting the responce
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
     // res.send('Hello from yelpCamp!');
-    res.render('home');
+    // const campgrounds = await campground.find({}).populate('reviews');
+    // for (let camp of campgrounds) {
+    //     if (camp.reviews.length){
+    //         if(camp.reviews.filter(object => object.rating > 4)) {
+    //             res.render('home', {camp});
+    //         }
+    //     }
+    // }
+    const campgrounds = await campground.find({})
+    const featuredCamp = campgrounds.slice(0,3)
+    res.render('home', {featuredCamp});
 })
 
 // Respond if something is not there
