@@ -12,10 +12,24 @@ ImageSchema.virtual('thumbnail').get(function() {
     return this.url.replace('/upload', '/upload/w_200')
 })
 
+// include virtuals when document is converted to json
+const opts = {toJSON: {virtuals: true}}
+
 //Create the schema for the model
 const campgroundSchema = new Schema({
     title:String,
     images: [ImageSchema],
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     price: Number,
     description:String,
     location:String,
@@ -29,7 +43,13 @@ const campgroundSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Review'
         }
-    ]
+    ],
+}, opts)
+
+// adding virtuals to show the campground data in the map
+campgroundSchema.virtual('properties.popUpMarkup').get(function() {
+    return `<a href="/campgrounds/${this._id}">${this.title}</a>
+    <p>${this.description.substring(0,20)}...</p>`
 })
 
 // When delete a campground delete all the reviews related to it (mongoose middleware)
