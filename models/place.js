@@ -16,7 +16,7 @@ ImageSchema.virtual('thumbnail').get(function() {
 const opts = {toJSON: {virtuals: true}}
 
 //Create the schema for the model
-const campgroundSchema = new Schema({
+const placeSchema = new Schema({
     title:String,
     images: [ImageSchema],
     geometry: {
@@ -30,9 +30,10 @@ const campgroundSchema = new Schema({
             required: true
         }
     },
-    price: Number,
     description:String,
-    location:String,
+    location: String,
+    longitude: Schema.Types.Decimal128,
+    latitude: Schema.Types.Decimal128,
     // adding author from users
     author: {
         type: Schema.Types.ObjectId,
@@ -47,8 +48,8 @@ const campgroundSchema = new Schema({
 }, opts)
 
 // adding virtuals to show the campground data in the map
-campgroundSchema.virtual('properties.popUpMarkup').get(function() {
-    return `<a href="/campgrounds/${this._id}">${this.title}</a>
+placeSchema.virtual('properties.popUpMarkup').get(function() {
+    return `<a href="/places/${this._id}">${this.title}</a>
     <p>${this.description.substring(0,20)}...</p>`
 })
 
@@ -56,7 +57,7 @@ campgroundSchema.virtual('properties.popUpMarkup').get(function() {
 // if there is something in the document remove all the reviews 
 // which matches to the id in the reviews in the campground schema
 // Review.remove is deprected so hete deleteMany is used 
-campgroundSchema.post('findOneAndDelete', async function(doc) {
+placeSchema.post('findOneAndDelete', async function(doc) {
     if (doc) {
         await Review.deleteMany({      
             _id: {
@@ -67,4 +68,4 @@ campgroundSchema.post('findOneAndDelete', async function(doc) {
 })
 
 //exporting the model
-module.exports = mongoose.model('campground', campgroundSchema);
+module.exports = mongoose.model('Place', placeSchema);

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const campground = require('../models/campground');
+const Place = require('../models/place');
 const cities = require('./cities');
 const { descriptors, places } = require('./seedHelpers');
 
@@ -7,7 +7,7 @@ const { descriptors, places } = require('./seedHelpers');
 mongoose.set('strictQuery', false);
 
 //connect to the mongoose database
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+mongoose.connect('mongodb://127.0.0.1:27017/ajodhya-hill')
 
 //logic to check an error
 const db = mongoose.connection;
@@ -20,11 +20,11 @@ db.once('open', () => {
 const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async() => {
-    await campground.deleteMany({});
-    for (let i = 0; i < 50; i++) {
+    await Place.deleteMany({});
+    for (let i = 0; i < 10; i++) {
         const random1000 = Math.floor(Math.random() * 1000);
-        const price = Math.floor(Math.random()  * 20) + 10;
-        const camp = new campground({
+        // const price = Math.floor(Math.random()  * 20) + 10;
+        const place = new Place({
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             // image: 'https://source.unsplash.com/collection/483251',
@@ -38,7 +38,6 @@ const seedDB = async() => {
                 filename: 'YelpCamp/uifnrm5exk9okwra1qx2',
               }],
             author: '63be9bc24db208151741a7d7',
-            price,
             geometry: {
                 type: "Point",
                 coordinates: [
@@ -50,7 +49,7 @@ const seedDB = async() => {
             anim aliqua exercitation cillum aute nulla Lorem cillum qui cillum adipisicing amet exercitation commodo. 
             Adipisicing sint nulla laborum nisi aute laboris quis magna. Nisi elit laboris cupidatat Lorem et mollit.`
         })
-        await camp.save()
+        await place.save()
     }
     // const c = new campground({title: 'purple field'});
     // await c.save();

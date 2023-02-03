@@ -1,25 +1,23 @@
 const ExpressError = require('./utils/ExpressError')
-const { campgroundSchema, reviewSchema } = require('./schemas')
-const campground = require('./models/campground');
+const { placeSchema, reviewSchema } = require('./schemas')
+const Place = require('./models/place');
 const Review = require('./models/review')
 
 
 // is loggedin middleware for chacking if the user is logged in or not
 module.exports.isLoggedIn = (req, res, next) => {
-    // console.log('req.user...', req.user) // to get the user information
+ // to get the user information
     if (!req.isAuthenticated()) {
         // redirect a user where the user attempt to login
-        // return to is the url whre the user back ( you can put whatever you want)
-        // req.session.returnTo = req.originalUrl // move it to the app.js
         req.flash('error', 'you must be logged in first')
         return res.redirect('/login')
     }
     next()
 }
 // saperating the joi validation
-module.exports.validateCampground = (req, res, next) => {
+module.exports.validatePlace = (req, res, next) => {
     // pass our data through schema
-    const { error } = campgroundSchema.validate(req.body)
+    const { error } = placeSchema.validate(req.body)
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -30,10 +28,10 @@ module.exports.validateCampground = (req, res, next) => {
 // Checking if the user is author
 module.exports.isAuthor = async(req, res, next) => {
     const {id} = req.params
-    const camp = await campground.findById(id)
-    if (!camp.author.equals(req.user._id)) {
+    const place = await Place.findById(id)
+    if (!place.author.equals(req.user._id)) {
         req.flash('error', 'You do not have the permission to do it')
-        return res.redirect(`/campgrounds/${id}`)
+        return res.redirect(`/places/${id}`)
     }
     next()
 }
@@ -54,7 +52,7 @@ module.exports.isReviewAuthor = async(req, res, next) => {
     const review = await Review.findById(reviewId)
     if (!review.author.equals(req.user._id)) {
         req.flash('error', 'You do not have the permission to do it')
-        return res.redirect(`/campgrounds/${id}`)
+        return res.redirect(`/places/${id}`)
     }
     next()
 }

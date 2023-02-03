@@ -1,0 +1,10 @@
+.nav-item {
+    border-bottom: .20rem solid transparent ;
+}
+.nav-item:hover {
+    color: blue;
+    border-bottom: 0.2rem solid blue;
+}
+.nav-link:hover {
+    color: blue;
+}

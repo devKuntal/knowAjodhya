@@ -1,7 +1,6 @@
 if(process.env.NODE_ENV !== "production") {   // if running in development mode require env file
     require('dotenv').config();
 }
-// console.log(process.env)
 
 const express = require('express');
 const app = express();
@@ -13,10 +12,11 @@ const flash = require('connect-flash')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const multer  = require('multer')
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require("helmet");
 
-// const upload = multer({ dest: 'uploads/' })
 const User = require('./models/user')
-const campground = require('./models/campground')
+const Place = require('./models/place')
 
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -24,7 +24,7 @@ const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError')
 
 // Importing Routes
-const campgroundRoutes = require('./routes/campgrounds')  // Importing campgrounds
+const placeRoutes = require('./routes/place')  // Importing campgrounds
 const reviewRoutes = require('./routes/reviews');  // Importing Reviews
 const userRoutes = require('./routes/user')
 
@@ -32,7 +32,7 @@ const userRoutes = require('./routes/user')
 mongoose.set('strictQuery', false);
 
 //connect to the mongoose database
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+mongoose.connect('mongodb://127.0.0.1:27017/ajodhya-hill')
 
 //logic to check an error
 const db = mongoose.connection;
@@ -55,13 +55,17 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 // serving public directory
 app.use(express.static(path.join(__dirname, 'public')))
+// mongo Sanatize for mongo injection
+app.use(mongoSanitize());
 // adding express sessions
 const sessionConfig = {
+    name: 'session',  // used to hide the default name
     secret: 'thisshouldnotbeinproduction',
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        // secure: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
@@ -70,6 +74,65 @@ app.use(session(sessionConfig))
 
 //Setting up flash
 app.use(flash())
+//Helmet
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+    "https://res.cloudinary.com/dqsjjbp5w/"
+];
+//This is the array that needs added to
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+    "https://res.cloudinary.com/dqsjjbp5w/"
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+    "https://res.cloudinary.com/dqsjjbp5w/"
+];
+const fontSrcUrls = [
+    "https://res.cloudinary.com/dqsjjbp5w/"
+];
+app.use(
+    helmet.contentSecurityPolicy({
+        useDefaults: false,
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dqsjjbp5w/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+            mediaSrc   : [ "https://res.cloudinary.com/dqsjjbp5w/" ],
+            childSrc   : [ "blob:" ],
+            upgradeInsecureRequests: [],
+        },
+        crossOriginEmbedderPolicy: false,
+    })
+);
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
 
 // Passrort middleware or initilize passport
 app.use(passport.initialize())
@@ -95,28 +158,20 @@ app.use((req, res, next)  => {
 })
 
 // Campgrounds routes
-app.use('/campgrounds', campgroundRoutes)
+app.use('/places', placeRoutes)
 
 // review routes
-app.use('/campgrounds/:id/reviews', reviewRoutes)
+app.use('/places/:id/reviews', reviewRoutes)
 
 //User routes
 app.use('/', userRoutes)
 
 //getting the responce
 app.get('/', async(req, res) => {
-    // res.send('Hello from yelpCamp!');
-    // const campgrounds = await campground.find({}).populate('reviews');
-    // for (let camp of campgrounds) {
-    //     if (camp.reviews.length){
-    //         if(camp.reviews.filter(object => object.rating > 4)) {
-    //             res.render('home', {camp});
-    //         }
-    //     }
-    // }
-    const campgrounds = await campground.find({})
-    const featuredCamp = campgrounds.slice(0,3)
-    res.render('home', {featuredCamp});
+    const places = await Place.find({})
+    const featuredPlace = places.slice(0,3)
+    const secondFeatured = places.slice(3,6)
+    res.render('home', {featuredPlace, secondFeatured, places});
 })
 
 // Respond if something is not there
